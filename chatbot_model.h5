@@ -1,0 +1,39 @@
+import tensorflow as tf
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import numpy as np
+import joblib
+import os
+
+# 1. Check karna ke files output folder mein mojood hain ya nahi
+print("Available files:", os.listdir('/kaggle/working'))
+
+# 2. Model aur Tokenizers load karna
+model = tf.keras.models.load_model('chatbot_model.h5')
+tokenizer = joblib.load('tokenizer.pkl')
+label_tokenizer = joblib.load('label_tokenizer.pkl')
+
+max_length = 20
+padding_type = 'post'
+trunc_type = 'post'
+
+# Reverse word map banana taake predicted index ko wapas lafzon mein badla ja sake
+reverse_word_map = {v: k for k, v in label_tokenizer.word_index.items()}
+
+# 3. Chat function
+def get_bot_response(user_text):
+    # Text ko sequence aur padding dena
+    seq = tokenizer.texts_to_sequences([user_text])
+    padded_seq = pad_sequences(seq, maxlen=max_length, padding=padding_type, truncating=trunc_type)
+    
+    # Model se prediction lena
+    prediction = model.predict(padded_seq, verbose=0)
+    predicted_index = np.argmax(prediction)
+    
+    # Jawab dhoondna
+    response = reverse_word_map.get(predicted_index, "Mujhe iska jawab samajh nahi aaya.")
+    return response
+
+# 4. Test karne ke liye sample input
+test_question = "hello"
+print(f"\nAap ka sawal: {test_question}")
+print(f"Bot ka jawab: {get_bot_response(test_question)}")
