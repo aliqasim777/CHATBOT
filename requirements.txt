@@ -1,4 +1,4 @@
-tensorflow
 streamlit
-joblib
+tensorflow-cpu
 numpy
+joblib
