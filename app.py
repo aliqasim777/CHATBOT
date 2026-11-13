@@ -83,3 +83,15 @@ if user_input := st.chat_input("Yahan apna sawal likhein..."):
             st.markdown(bot_response)
             
     st.session_state.messages.append({"role": "assistant", "content": bot_response})
+    import os
+import tensorflow as tf
+
+MODEL_PATH = 'your_model.h5'
+
+if not os.path.exists(MODEL_PATH):
+    # Use gdown to download your file from Google Drive
+    import gdown
+    url = 'YOUR_GOOGLE_DRIVE_PUBLIC_FILE_URL'
+    gdown.download(url, MODEL_PATH, quiet=False)
+
+model = tf.keras.models.load_model(MODEL_PATH)
